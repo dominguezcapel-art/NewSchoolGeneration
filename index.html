@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NSG - New School Generation | Automatización IA</title>
+  <meta name="description" content="NSG - Soluciones de automatización con IA para empresas. Chatbots, llamadas, agendas y más. Contacta con nosotros." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Tipografías -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    /* ---------------------------
+       RESET & BASE
+       --------------------------- */
+    :root{
+      --bg:#060606;
+      --card:#0e0e0f;
+      --muted:#bdbdbd;
+      --accent:#8ef0e6;
+      --accent-2:#d7ffd9;
+      --glass: rgba(255,255,255,0.03);
+      --blur: 12px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color:#eee;
+      background:var(--bg);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+
+    /* Canvas full screen background */
+    #bg-canvas{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      display:block;
+    }
+
+    /* Page container sits above canvas */
+    .site{
+      position:relative;
+      z-index:2;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+    }
+
+    header{
+      width:100%;
+      padding:24px 40px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      position:relative;
+      z-index:3;
+      backdrop-filter: blur(6px);
+    }
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      text-decoration:none;
+      color:inherit;
+    }
+    .mark{
+      width:44px;height:44px;border-radius:10px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6), inset 0 -2px 6px rgba(255,255,255,0.02);
+      font-weight:800;font-family:"Poppins",sans-serif;color:#fff;
+      letter-spacing: -1px;
+    }
+    .brand{
+      display:flex;flex-direction:column;line-height:0.95;
+    }
+    .brand .title{font-family:"Poppins",sans-serif;font-weight:700;font-size:16px}
+    .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+    /* HERO */
+    .hero{
+      width:100%;
+      max-width:1200px;
+      margin: 40px auto 80px;
+      padding: 80px 28px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      text-align:center;
+      gap:28px;
+      position:relative;
+    }
+    .hero h1{
+      font-family:"Poppins",sans-serif;
+      font-weight:800;
+      font-size:72px;
+      margin:0;
+      letter-spacing:8px;
+      text-transform:uppercase;
+      color: #fff;
+      text-shadow: 0 6px 30px rgba(0,0,0,0.6);
+    }
+    .hero p{
+      max-width:920px;
+      margin:0;
+      color:var(--muted);
+      font-size:18px;
+      line-height:1.6;
+    }
+    .cta-row{display:flex;gap:16px;align-items:center;margin-top:8px}
+    .btn{
+      border:0;padding:14px 26px;border-radius:40px;font-weight:600;
+      cursor:pointer;background:linear-gradient(90deg, rgba(143,240,230,0.14), rgba(215,255,217,0.06));
+      color:#fff;backdrop-filter:blur(8px);box-shadow:0 8px 30px rgba(0,0,0,0.6);
+      position:relative;overflow:visible;
+    }
+    .btn-primary{
+      background:linear-gradient(90deg,#8ef0e6, #8be6b0);
+      color:#062322;
+      box-shadow: 0 10px 30px rgba(143,240,230,0.12), 0 0 36px rgba(143,240,230,0.06);
+    }
+    .btn:after{
+      content:"";
+      position:absolute;inset:-2px;border-radius:inherit;
+      filter:blur(20px);opacity:0.5;
+      pointer-events:none;
+    }
+    .btn-ghost{
+      background:transparent;border:1px solid rgba(255,255,255,0.06);
+      color:var(--muted);
+    }
+
+    /* SERVICES */
+    .services{
+      width:100%;
+      max-width:1200px;
+      margin:40px auto;
+      padding:40px 28px;
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:20px;
+      z-index:2;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px;
+      padding:28px;
+      min-height:160px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.03);
+      transition:transform .35s ease, box-shadow .35s ease;
+    }
+    .card:hover{ transform: translateY(-8px); box-shadow: 0 18px 50px rgba(0,0,0,0.65); }
+    .icon{
+      width:48px;height:48px;border-radius:10px;
+      display:grid;place-items:center;margin-bottom:12px;
+      background:rgba(255,255,255,0.03);
+    }
+    .card h3{margin:0 0 10px 0;font-size:18px;font-weight:700}
+    .card p{margin:0;color:var(--muted);line-height:1.5;font-size:14px}
+
+    /* CONTACT */
+    .contact{
+      width:100%;
+      max-width:1000px;
+      margin:80px auto 120px;
+      padding:48px 32px;
+      border-radius:16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.2));
+      box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+      border:1px solid rgba(255,255,255,0.03);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:20px;
+    }
+    .contact h2{margin:0;font-family:"Poppins",sans-serif;font-size:36px}
+    .contact form{display:flex;gap:12px;width:100%;max-width:720px;align-items:center}
+    .input{
+      flex:1;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.02); color: #fff;outline:none;
+      box-shadow: inset 0 -6px 18px rgba(0,0,0,0.6);
+      font-size:16px;
+    }
+    .input::placeholder{color:rgba(255,255,255,0.38)}
+    .form-note{color:var(--muted);font-size:14px;margin-top:6px}
+
+    /* FOOTER */
+    footer{width:100%;padding:28px 40px;color:var(--muted);text-align:center}
+
+    /* Responsive */
+    @media (max-width:980px){
+      .hero h1{font-size:56px;letter-spacing:4px}
+      .services{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:640px){
+      header{padding:18px}
+      .hero{padding: 52px 20px}
+      .hero h1{font-size:36px}
+      .services{grid-template-columns:1fr;gap:14px;padding:20px}
+      .contact form{flex-direction:column;padding:0}
+      .btn{width:100%}
+    }
+
+    /* small accent glow animation for the primary CTA */
+    @keyframes pulseGlow{
+      0%{ box-shadow: 0 8px 30px rgba(143,240,230,0.06), 0 0 12px rgba(143,240,230,0.04)}
+      50%{ box-shadow: 0 18px 44px rgba(143,240,230,0.12), 0 0 28px rgba(143,240,230,0.08)}
+      100%{ box-shadow: 0 8px 30px rgba(143,240,230,0.06), 0 0 12px rgba(143,240,230,0.04)}
+    }
+    .btn-primary{animation: pulseGlow 3.2s infinite}
+  </style>
+</head>
+<body>
+  <!-- Canvas background -->
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="site">
+    <header>
+      <a class="logo" href="#">
+        <div class="mark">NSG</div>
+        <div class="brand">
+          <div class="title">NSG</div>
+          <div class="sub">New School Generation</div>
+        </div>
+      </a>
+
+      <nav aria-label="Menú principal">
+        <button class="btn btn-ghost" onclick="document.getElementById('contact-input').scrollIntoView({behavior:'smooth', block:'center'})">Contacta</button>
+      </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero" role="region" aria-labelledby="hero-title">
+      <h1 id="hero-title">NSG</h1>
+      <p>
+        Sistemas de <strong>automatización con IA</strong> para empresas: chatbots, gestión de llamadas, calendarios y procesos. 
+        Implementaciones rápidas, integradas y medibles — mejora la eficiencia y toma decisiones basadas en datos.
+      </p>
+      <div class="cta-row">
+        <button class="btn btn-primary" onclick="document.getElementById('contact-input').focus()">Contacta con nosotros</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Nuestros servicios</button>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services" class="services" aria-label="Servicios">
+      <article class="card" role="article">
+        <div class="icon">🤖</div>
+        <h3>Chatbots conversacionales</h3>
+        <p>Automatiza la atención y soporte con bots capaces de entender intención y contexto para procesos complejos.</p>
+      </article>
+
+      <article class="card" role="article">
+        <div class="icon">📞</div>
+        <h3>Análisis de llamadas</h3>
+        <p>Transcripción y análisis con IA para auditoría, detección de alertas y patrones de venta.</p>
+      </article>
+
+      <article class="card" role="article">
+        <div class="icon">📆</div>
+        <h3>Gestión de agendas</h3>
+        <p>Automatizamos calendarios, reservas y recordatorios integrados con tu stack (Google, Outlook, etc.).</p>
+      </article>
+
+      <article class="card" role="article">
+        <div class="icon">🔗</div>
+        <h3>Integraciones</h3>
+        <p>Conexión con CRMs, sistemas telefónicos y plataformas internas mediante APIs seguras.</p>
+      </article>
+
+      <article class="card" role="article">
+        <div class="icon">📊</div>
+        <h3>Panel de control</h3>
+        <p>Dashboards a medida con KPIs y análisis que importan para tu negocio.</p>
+      </article>
+
+      <article class="card" role="article">
+        <div class="icon">⚙️</div>
+        <h3>Soporte y despliegue</h3>
+        <p>Implantación, formación y soporte contínuo para que saques el máximo rendimiento.</p>
+      </article>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">Contacta con nosotros</h2>
+      <p class="form-note">Déjanos tu correo o teléfono y te responderemos en menos de 24h. También ofrecemos demos gratuitas.</p>
+      <form id="contact-form" onsubmit="handleSubmit(event)" aria-label="Formulario de contacto">
+        <input id="contact-input" class="input" type="text" placeholder="Correo o teléfono" required />
+        <button type="submit" class="btn btn-primary">Enviar</button>
+      </form>
+      <div id="form-msg" class="form-note" aria-live="polite"></div>
+    </section>
+
+    <footer>
+      © <strong>NSG</strong> - New School Generation · Automatización IA para empresas
+    </footer>
+  </div>
+
+  <!-- ---------------------------
+       Canvas animation script
+       - Partículas flotantes + streaks que dan sensación de movimiento
+       - Comentarios incluidos para facilitar personalizaciones
+       --------------------------- -->
+  <script>
+    // Obtener canvas y contexto
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Ajustar tamaño
+    function resize() {
+      canvas.width = window.innerWidth * devicePixelRatio;
+      canvas.height = window.innerHeight * devicePixelRatio;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // CONFIGURACIÓN
+    const cfg = {
+      particleCount: Math.max(80, Math.floor(window.innerWidth / 12)),
+      streakCount: Math.max(30, Math.floor(window.innerWidth / 40)),
+      particleSize: {min:0.6, max:2.4},
+      speed: 0.6,
+      streakSpeed: 2.2,
+      hue: 175 // tono principal (puedes cambiar)
+    };
+
+    // Partículas
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset(){
+        // posición aleatoria alrededor de centro
+        const r = Math.random()*Math.max(innerWidth, innerHeight) * 0.6;
+        const angle = Math.random()*Math.PI*2;
+        this.x = innerWidth/2 + Math.cos(angle)*r;
+        this.y = innerHeight/2 + Math.sin(angle)*r;
+        this.vx = (this.x - innerWidth/2) * 0.0002 * (Math.random()*1.6 + 0.4);
+        this.vy = (this.y - innerHeight/2) * 0.0002 * (Math.random()*1.6 + 0.4);
+        this.size = Math.random()*(cfg.particleSize.max - cfg.particleSize.min) + cfg.particleSize.min;
+        this.alpha = Math.random()*0.6 + 0.15;
+      }
+      update(dt){
+        // los alejamos del centro ligeramente (efecto profundidad)
+        this.x += this.vx * cfg.speed * dt;
+        this.y += this.vy * cfg.speed * dt;
+        // si sale de pantalla, reset
+        if (this.x < -50 || this.x > innerWidth+50 || this.y < -50 || this.y > innerHeight+50) this.reset();
+      }
+      draw(ctx){
+        ctx.beginPath();
+        const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size*6);
+        g.addColorStop(0, `rgba(190,255,240,${this.alpha})`);
+        g.addColorStop(0.4, `rgba(120,200,190,${this.alpha*0.35})`);
+        g.addColorStop(1, `rgba(10,10,10,0)`);
+        ctx.fillStyle = g;
+        ctx.arc(this.x, this.y, this.size*3, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+
+    // Streaks / líneas rápidas tipo túnel
+    class Streak {
+      constructor(){
+        this.reset();
+      }
+      reset(){
+        // parten cerca del centro
+        this.x = innerWidth/2 + (Math.random()-0.5) * innerWidth * 0.25;
+        this.y = innerHeight/2 + (Math.random()-0.5) * innerHeight * 0.25;
+        // velocidad en dirección a borde (a partir del centro)
+        const angle = Math.atan2(this.y - innerHeight/2, this.x - innerWidth/2);
+        const sp = cfg.streakSpeed * (0.6 + Math.random()*1.6);
+        this.vx = Math.cos(angle) * sp;
+        this.vy = Math.sin(angle) * sp;
+        this.len = 40 + Math.random()*160;
+        this.thickness = 0.6 + Math.random()*2.4;
+        this.alpha = 0.12 + Math.random()*0.28;
+        this.h = cfg.hue + (Math.random()*40 - 20);
+      }
+      update(dt){
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        // si ya salió, resetear
+        if (this.x < -200 || this.x > innerWidth+200 || this.y < -200 || this.y > innerHeight+200) this.reset();
+      }
+      draw(ctx){
+        ctx.save();
+        ctx.lineWidth = this.thickness;
+        const grad = ctx.createLinearGradient(this.x, this.y, this.x - this.vx*3, this.y - this.vy*3);
+        grad.addColorStop(0, `hsla(${this.h}, 90%, 70%, ${this.alpha})`);
+        grad.addColorStop(1, `hsla(${this.h}, 80%, 50%, 0)`);
+        ctx.strokeStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(this.x - this.vx*this.len*0.03, this.y - this.vy*this.len*0.03);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    // Crear poblaciones
+    let particles = [];
+    let streaks = [];
+    function initEntities(){
+      particles = [];
+      streaks = [];
+      for (let i=0;i<cfg.particleCount;i++) particles.push(new Particle());
+      for (let i=0;i<cfg.streakCount;i++) streaks.push(new Streak());
+    }
+    initEntities();
+
+    // Anim loop
+    let last = performance.now();
+    function loop(now){
+      const dt = Math.min(36, now - last) / 16; // normalizar
+      last = now;
+
+      // Clear with slight overlay para crear estela suave
+      ctx.clearRect(0,0,innerWidth,innerHeight);
+
+      // background soft vignette
+      const v = ctx.createLinearGradient(0,0,0,innerHeight);
+      v.addColorStop(0, 'rgba(0,0,0,0.6)');
+      v.addColorStop(0.35, 'rgba(6,6,6,0.3)');
+      v.addColorStop(1, 'rgba(0,0,0,0.85)');
+      ctx.fillStyle = v;
+      ctx.fillRect(0,0,innerWidth,innerHeight);
+
+      // draw streaks behind
+      ctx.globalCompositeOperation = 'lighter';
+      streaks.forEach(s => {
+        s.update(dt);
+        s.draw(ctx);
+      });
+
+      // particles
+      particles.forEach(p => {
+        p.update(dt);
+        p.draw(ctx);
+      });
+
+      // centro glow
+      const cx = innerWidth/2, cy = innerHeight/2;
+      const g = ctx.createRadialGradient(cx,cy,0,cx,cy,Math.max(innerWidth,innerHeight)/2);
+      g.addColorStop(0, 'rgba(12,22,20,0.05)');
+      g.addColorStop(0.5, 'rgba(8,10,10,0.12)');
+      g.addColorStop(1, 'rgba(0,0,0,0.75)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,innerWidth,innerHeight);
+
+      // subtle horizontal scanline (modern techno feel)
+      ctx.globalCompositeOperation = 'overlay';
+      ctx.fillStyle = 'rgba(255,255,255,0.003)';
+      for(let y=0;y<innerHeight;y+=6){
+        ctx.fillRect(0,y,innerWidth,0.6);
+      }
+
+      ctx.globalCompositeOperation = 'source-over';
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    // Recalculate entities on resize (for responsiveness)
+    window.addEventListener('resize', ()=>{
+      resize();
+      // adapt counts slightly to viewport
+      cfg.particleCount = Math.max(60, Math.floor(window.innerWidth / 12));
+      cfg.streakCount = Math.max(20, Math.floor(window.innerWidth / 40));
+      initEntities();
+    });
+
+    // Small performance-friendly pause when page hidden
+    document.addEventListener('visibilitychange', ()=>{
+      if (document.hidden) {
+        // stop animating by halting requestAnimationFrame loop naturally (optional)
+        // For simplicity, we won't implement heavy pausing here; canvas is lightweight.
+      }
+    });
+
+    /* ---------------------------
+       Simple form handler (stub)
+       - Aquí podrías conectar a tu backend o a un servicio como Formspree / Zapier / Integromat
+       --------------------------- */
+    function handleSubmit(e){
+      e.preventDefault();
+      const input = document.getElementById('contact-input');
+      const msg = document.getElementById('form-msg');
+      const val = input.value.trim();
+      if(!val){ msg.textContent = 'Introduce tu correo o teléfono.'; return; }
+
+      // Simular envío (reemplaza esto por fetch a tu endpoint)
+      msg.textContent = 'Enviando...';
+      setTimeout(()=>{
+        msg.textContent = '¡Gracias! Hemos recibido tu solicitud. Te contactaremos pronto.';
+        input.value = '';
+      }, 900);
+    }
+
+    // Accessibility: focus outline improvements when using keyboard
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Tab') document.body.classList.add('show-focus');
+    });
+  </script>
+</body>
+</html>
